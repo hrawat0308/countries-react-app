@@ -12,27 +12,66 @@ const initialStageSlice = createSlice({
 
 const selectedCountrySlice = createSlice({
     name: 'selectedCountry',
-    initialState: { country: '', neighbour1: '', neighbour2: '', countryObj:{}, neighbour1Obj: {}, neighbour2Obj:{} },
+    initialState: { country: '', neighbour:{} , countryObj:{}, neighboursObj: [] },
     reducers: {
         setMainCountry(state,action){
+            state.neighboursObj = [];
             state.country = action.payload.country;
-        },
-        setNeighbours(state, action){
-            state.neighbour1 = action.payload.neighbour1;
-            state.neighbour2 = action.payload.neighbour2;
         },
         
         setMainCountryArray(state, action){
+            state.neighboursObj = [];
             state.countryObj = action.payload.countryArray;
-            
         },
 
         setNeighbourContriesArray(state, action){
-            state.neighbour1Obj = action.payload.neighbour1Array;
-            state.neighbour2Obj = action.payload.neighbour2Array;
+            state.neighboursObj = [ ...state.neighboursObj,action.payload.neighbour];
         }
     }
 });
+
+export const fetchNeighbours = (countryObj)=>{
+    if(!countryObj) return;
+    return async (dispatch) => {
+        try{
+            const neighboursArray = countryObj.borders.split(",");
+            console.log(neighboursArray);
+            if(neighboursArray){
+                neighboursArray.forEach( async (item)=>{
+                    item = item.trim();
+                    console.log(item);
+                    const response = await fetch(`https://restcountries.com/v3.1/alpha/${item}`);
+                    if(!response.ok){
+                        throw new Error("No countries Fetched");
+                    }
+                    const neighbourCountry = {};
+                    const [responseData] = await response.json();
+                    if(!responseData){
+                        console.log("No Neighbour Data");
+                        return;
+                    }
+                    neighbourCountry.name = (responseData.name ?? "").common;
+                    neighbourCountry.capital = (responseData.capital ?? "")[0];
+                    let currency = responseData.currencies ? Object.values(responseData.currencies)[0] : undefined;
+                    neighbourCountry.currency = (currency?.symbol ? currency.symbol : '')+" "+(currency?.name ? currency.name : '');  
+                    neighbourCountry.flag = (responseData.flags.svg ?? '');
+                    let languagesArray = (responseData.languages ?? '');
+                    languagesArray = '' ? '' : Object.keys(languagesArray).map(function(key){ return languagesArray[key] }).join(', ');  
+                    neighbourCountry.languages = languagesArray;
+                    neighbourCountry.region = (responseData.region ?? '');
+                    neighbourCountry.population = (responseData.population ?? '');
+                    neighbourCountry.borders = (responseData.borders ?? '') ? responseData.borders.join(', ') : '';
+                    dispatch(selectedCountryActions.setNeighbourContriesArray({
+                        neighbour : neighbourCountry,
+                    }));
+                });
+            }
+        }
+        catch(err){
+            console.log(err.message);
+        }
+    }
+};
 
 export const fetchCountries = (country)=>{
     return async (dispatch) => {
@@ -58,10 +97,6 @@ export const fetchCountries = (country)=>{
             mainCountry.region = (responseData.region ?? '');
             mainCountry.population = (responseData.population ?? '');
             mainCountry.borders = (responseData.borders ?? '') ? responseData.borders.join(', ') : '';
-            dispatch(selectedCountryActions.setNeighbours({
-                neighbour1 : mainCountry.neighbour1,
-                neighbour2 : mainCountry.neighbour2
-            }));
             dispatch(selectedCountryActions.setMainCountryArray({
                 countryArray : mainCountry,
             }));
