@@ -25,7 +25,8 @@ const selectedCountrySlice = createSlice({
         },
 
         setNeighbourContriesArray(state, action){
-            state.neighboursObj = [ ...state.neighboursObj,action.payload.neighbour];
+            // state.neighboursObj = [ ...state.neighboursObj,action.payload.neighbour];
+            state.neighboursObj.push(action.payload.neighbour);
         }
     }
 });
