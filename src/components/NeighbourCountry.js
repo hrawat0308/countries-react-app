@@ -3,7 +3,13 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-import { useSelector } from 'react-redux';
+import FlagTwoToneIcon from '@mui/icons-material/FlagTwoTone';
+import BadgeTwoToneIcon from '@mui/icons-material/BadgeTwoTone';
+import PeopleAltTwoToneIcon from '@mui/icons-material/PeopleAltTwoTone';
+import PaidTwoToneIcon from '@mui/icons-material/PaidTwoTone';
+import TravelExploreTwoToneIcon from '@mui/icons-material/TravelExploreTwoTone';
+import InterpreterModeTwoToneIcon from '@mui/icons-material/InterpreterModeTwoTone';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 
 const NeighbourCountry = function(props){
     
@@ -17,13 +23,13 @@ const NeighbourCountry = function(props){
                     alt={props.name}
                 />
                 <CardContent>
-                    <Typography gutterBottom variant="h3" component="div">{props.name}</Typography>
-                    <Typography variant="h6" color="text.primary">Capital : {props.capital}</Typography>
-                    <Typography variant="body1" color="text.secondary">Region : {props.region}</Typography>
-                    <Typography variant="body1" color="text.secondary">Population : {props.population}</Typography>
-                    <Typography variant="body1" color="text.secondary">Currency : {props.currency}</Typography>
-                    <Typography variant="body1" color="text.secondary">Languages Spoken : {props.languages} </Typography>
-                    <Typography variant="body1" color="text.secondary">Neighbours : {props.borders}</Typography>
+                    <Typography gutterBottom variant="h3" component="div">{props.name} <FlagTwoToneIcon /></Typography>
+                    <Typography variant="h6" color="text.primary">Capital : {props.capital} <BadgeTwoToneIcon /></Typography>
+                    <Typography variant="body1" color="text.secondary">Region : {props.region} <TravelExploreTwoToneIcon /></Typography>
+                    <Typography variant="body1" color="text.secondary">Population : {props.population} <PeopleAltTwoToneIcon /></Typography>
+                    <Typography variant="body1" color="text.secondary">Currency : {props.currency} <PaidTwoToneIcon /></Typography>
+                    <Typography variant="body1" color="text.secondary">Languages Spoken : {props.languages} <InterpreterModeTwoToneIcon /> </Typography>
+                    <Typography variant="body1" color="text.secondary">Neighbours : {props.borders} <AccessibilityNewIcon /></Typography>
                 </CardContent>
 
             </CardActionArea>
