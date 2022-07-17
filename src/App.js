@@ -1,10 +1,12 @@
-
+import SearchField from "./components/SearchField";
+import CardContainer from './components/CardContainer';
 
 
 function App() {
   return (
     <div>
-        Project
+        <SearchField />
+        <CardContainer />
     </div>
   );
 }
