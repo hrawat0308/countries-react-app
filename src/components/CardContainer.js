@@ -1,17 +1,18 @@
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect,Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classes from './Card.module.css';
 import MainCountry from './MainCountry';
 import NeighbourCountry from './NeighbourCountry';
-import {fetchCountries, initialStageActions} from '../store/index';
-
+import {fetchCountries, initialStageActions, fetchNeighbours} from '../store/index';
 
 
 const CardContainer = function(){
     const dispatch = useDispatch();
     const country = useSelector(state=>state.selectedCountry.country);
     const initialStage = useSelector(state=>state.initialStage.initialValue);
-    console.log("initial Stage is :", initialStage);
+    const countryObj = useSelector(state=>state.selectedCountry.countryObj);
+    const neighbours = useSelector(state=>state.selectedCountry.neighboursObj);
+    console.log(neighbours);
     useEffect(()=>{
         if(initialStage){
             dispatch(initialStageActions.setInitialStage());
@@ -20,23 +21,36 @@ const CardContainer = function(){
         dispatch(fetchCountries(country));
     },[country, dispatch, initialStage]);
 
+
+    useEffect(()=>{
+        dispatch(fetchNeighbours(countryObj));
+    }, [country, dispatch, countryObj]);
+
     return(
         <Fragment>
         <div className={classes.CardContainer}>
             <div className={classes.mainCardContainer}>
                 <MainCountry cssClass={classes.mainCountry} />
             </div>
+            <div className={classes.neighbourCardCountainer}>
             {
-                !initialStage && 
-                    <div className={classes.neighbourCardCountainer}>
-                        <NeighbourCountry cssClass={classes.neighbourCountry} />
-                        <NeighbourCountry cssClass={classes.neighbourCountry} />
-                        <NeighbourCountry cssClass={classes.neighbourCountry} />
-                        <NeighbourCountry cssClass={classes.neighbourCountry} />
-                        <NeighbourCountry cssClass={classes.neighbourCountry} />
-                        <NeighbourCountry cssClass={classes.neighbourCountry} />
-                    </div>
+                !initialStage && neighbours.map(item=>{
+                    return(
+                        <NeighbourCountry cssClass={classes.neighbourCountry} 
+                                          name={item.name} 
+                                          capital={item.capital} 
+                                          currency={item.currency}
+                                          flag={item.flag}
+                                          languages={item.languages}
+                                          population={item.population}
+                                          region={item.region}
+                                          borders={item.borders}
+                                    />
+                    )
+                })
+                    
             }
+            </div>
             
         </div>
         </Fragment>
