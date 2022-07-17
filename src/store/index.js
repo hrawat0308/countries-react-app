@@ -10,22 +10,33 @@ const initialStageSlice = createSlice({
     }
 });
 
+const isLoadingSlice = createSlice({
+    name:'isLoading',
+    initialState : {isLoading : false},
+    reducers:{
+        setIsLoading(state, action){
+            state.isLoading = !state.isLoading;
+        }
+    }
+});
+
 const selectedCountrySlice = createSlice({
     name: 'selectedCountry',
-    initialState: { country: '', neighbour:{} , countryObj:{}, neighboursObj: [] },
+    initialState: { country: '', neighbour:{} , countryObj:{}, neighboursObj: [], emptyArray : [] },
     reducers: {
         setMainCountry(state,action){
-            state.neighboursObj = [];
+            // state.neighboursObj = [];
+            state.neighboursObj = [...state.emptyArray];
             state.country = action.payload.country;
         },
         
         setMainCountryArray(state, action){
-            state.neighboursObj = [];
+            // state.neighboursObj = [];
+            state.neighboursObj = [...state.emptyArray];
             state.countryObj = action.payload.countryArray;
         },
 
         setNeighbourContriesArray(state, action){
-            // state.neighboursObj = [ ...state.neighboursObj,action.payload.neighbour];
             state.neighboursObj.push(action.payload.neighbour);
         }
     }
@@ -35,12 +46,11 @@ export const fetchNeighbours = (countryObj)=>{
     if(!countryObj) return;
     return async (dispatch) => {
         try{
-            const neighboursArray = countryObj.borders.split(",");
-            console.log(neighboursArray);
-            if(neighboursArray){
+            const neighboursArray = countryObj?.borders?.split(",");
+            if(neighboursArray === undefined) return;
+            if(neighboursArray[0] !== ''){
                 neighboursArray.forEach( async (item)=>{
                     item = item.trim();
-                    console.log(item);
                     const response = await fetch(`https://restcountries.com/v3.1/alpha/${item}`);
                     if(!response.ok){
                         throw new Error("No countries Fetched");
@@ -48,7 +58,6 @@ export const fetchNeighbours = (countryObj)=>{
                     const neighbourCountry = {};
                     const [responseData] = await response.json();
                     if(!responseData){
-                        console.log("No Neighbour Data");
                         return;
                     }
                     neighbourCountry.name = (responseData.name ?? "").common;
@@ -113,10 +122,12 @@ const store = configureStore({
     reducer : {
         selectedCountry : selectedCountrySlice.reducer,
         initialStage : initialStageSlice.reducer,
+        isLoading : isLoadingSlice.reducer,
     }
 });
 
 
 export const selectedCountryActions = selectedCountrySlice.actions;
 export const initialStageActions = initialStageSlice.actions;
+export const isLoadingActions = isLoadingSlice.actions; 
 export default store;

@@ -12,12 +12,15 @@ const CardContainer = function(){
     const initialStage = useSelector(state=>state.initialStage.initialValue);
     const countryObj = useSelector(state=>state.selectedCountry.countryObj);
     const neighbours = useSelector(state=>state.selectedCountry.neighboursObj);
-    console.log(neighbours);
+    
+    
+
     useEffect(()=>{
         if(initialStage){
             dispatch(initialStageActions.setInitialStage());
             return;
         }
+        // dispatch(isLoadingActions.setIsLoading());
         dispatch(fetchCountries(country));
     },[country, dispatch, initialStage]);
 
@@ -26,15 +29,16 @@ const CardContainer = function(){
         dispatch(fetchNeighbours(countryObj));
     }, [country, dispatch, countryObj]);
 
+    
     return(
         <Fragment>
         <div className={classes.CardContainer}>
             <div className={classes.mainCardContainer}>
-                <MainCountry cssClass={classes.mainCountry} />
+                { <MainCountry cssClass={classes.mainCountry} />}
             </div>
             <div className={classes.neighbourCardCountainer}>
             {
-                !initialStage && neighbours.map(item=>{
+                !initialStage && neighbours.map((item, index)=>{
                     return(
                         <NeighbourCountry cssClass={classes.neighbourCountry} 
                                           name={item.name} 
@@ -45,6 +49,7 @@ const CardContainer = function(){
                                           population={item.population}
                                           region={item.region}
                                           borders={item.borders}
+                                          key={index}
                                     />
                     )
                 })
